@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Maison — Вишукана кухня{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <p class="hero__eyebrow">Ласкаво просимо до Maison</p>
+  <h1 class="hero__title">
+    MAISON
+    <em>restaurant</em>
+  </h1>
+  <p class="hero__sub">
+    Вишукана кухня, натхненна традиціями та сучасністю.
+    Кожна страва — маленький витвір мистецтва.
+  </p>
+  <div class="hero__actions">
+    <a href="/menu"     class="btn btn--primary">Переглянути меню</a>
+    <a href="/reserved" class="btn btn--outline">Забронювати столик</a>
+  </div>
+  <div class="hero__deco" aria-hidden="true">M</div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="about">
+  <div class="about__inner">
+    <div class="about__img-wrap">
+      <img src="/static/img/about.png" alt="Інтер'єр ресторану Maison">
+      <div class="about__img-badge">
+        <span class="about__img-badge-year">2018</span>
+        <span class="about__img-badge-text">рік заснування</span>
+      </div>
+    </div>
+    <div class="about__content">
+      <p class="about__eyebrow">Наша історія</p>
+      <h2 class="about__title">Місце, де їжа<br><em>стає мистецтвом</em></h2>
+      <div class="about__divider"></div>
+      <p class="about__text">
+        Maison — це більше ніж ресторан. Це простір, де кожна деталь продумана:
+        від добору локальних інгредієнтів до температури подачі страви.
+        Наша команда шеф-кухарів поєднує класичні французькі техніки
+        з сезонними продуктами українських фермерів.
+      </p>
+      <p class="about__text">
+        Ми віримо, що гарна вечеря — це ритуал. Тому в Maison немає дрібниць:
+        тільки увага, смак і атмосфера, яку хочеться повертати знову і знову.
+      </p>
+      <a href="/menu" class="btn btn--primary" style="margin-top:8px">До меню</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features">
+  <div class="features__inner">
+    <div class="features__item">
+      <div class="features__icon">✦</div>
+      <h3 class="features__title">Локальні продукти</h3>
+      <p class="features__text">Співпрацюємо з українськими фермерами. Свіжість і сезонність — основа кожного меню.</p>
+    </div>
+    <div class="features__item">
+      <div class="features__icon">◈</div>
+      <h3 class="features__title">Авторська кухня</h3>
+      <p class="features__text">Наш шеф-кухар створює страви, які поєднують класику та сучасний погляд на смак.</p>
+    </div>
+    <div class="features__item">
+      <div class="features__icon">❧</div>
+      <h3 class="features__title">Камерна атмосфера</h3>
+      <p class="features__text">Лише 12 столиків. Жодного шуму — тільки ви, ваша компанія та страва дня.</p>
+    </div>
+    <div class="features__item">
+      <div class="features__icon">◇</div>
+      <h3 class="features__title">Бронювання онлайн</h3>
+      <p class="features__text">Зарезервуйте столик у кілька кліків і приходьте — ми вже чекаємо.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta">
+  <div class="cta__inner">
+    <p class="cta__eyebrow">Не відкладайте</p>
+    <h2 class="cta__title">Забронюйте столик<br><em>на сьогодні</em></h2>
+    <p class="cta__sub">Вільні місця розбирають швидко. Зареєструйтесь і оберіть зручний час.</p>
+    <div class="cta__actions">
+      <a href="/reserved"  class="btn btn--gold">Забронювати</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

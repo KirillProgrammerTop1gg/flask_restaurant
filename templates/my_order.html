@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Замовлення №{{ order.id }} — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Деталі</p>
+    <h1 class="page-header__title">Замовлення <em>№ {{ order.id }}</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  <div class="order-detail">
+
+    <!-- ITEMS -->
+    <div class="order-items">
+      {% for name, quantity in order.order_list.items() %}
+        {% set pos = positions | selectattr('name', 'equalto', name) | first | default(none) %}
+        <div class="basket-item">
+
+          <div class="basket-item__img-wrap">
+            {% if pos %}
+              <img src="/static/menu/{{ pos.photo }}" alt="{{ name }}">
+            {% endif %}
+          </div>
+
+          <div class="basket-item__info">
+            <div class="basket-item__name">{{ name }}</div>
+            <div class="basket-item__meta">
+              {% if pos %}{{ pos.weight }} г &nbsp;·&nbsp;{% endif %}
+              {{ quantity }} шт
+            </div>
+          </div>
+
+          {% if pos %}
+          <div class="basket-item__price">{{ pos.price * pos.qty }} грн</div>
+          {% endif %}
+
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="order-summary">
+
+      <!-- STATUS -->
+      <p class="order-summary__label">Статус</p>
+      <div class="order-summary__status">
+        <span class="order-status order-status--{{ order.order_status | replace(' ', '-') }} order-status--lg">
+          {% if order.order_status == 'створено' %}🕐
+          {% elif order.order_status == 'готується' %}🍳
+          {% elif order.order_status == 'готово до видачі' %}✅
+          {% elif order.order_status == 'отримано' %}📦
+          {% endif %}
+          {{ order.order_status }}
+        </span>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="order-progress">
+        {% set steps = ['створено', 'готується', 'готово до видачі', 'отримано'] %}
+        {% set current_idx = steps.index(order.order_status) if order.order_status in steps else 0 %}
+        {% for step in steps %}
+        <div class="order-progress__step {% if loop.index0 <= current_idx %}order-progress__step--done{% endif %}">
+          <div class="order-progress__dot"></div>
+          <div class="order-progress__label">{{ step }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="order-summary__divider"></div>
+
+      <p class="order-summary__label">Загальна сума</p>
+      <div class="order-summary__value">
+        {{ total_price }}
+        <small style="font-size:18px; color:var(--clr-muted)">грн</small>
+      </div>
+
+      <p class="order-summary__label">Дата та час</p>
+      <p class="order-summary__date">{{ order.order_time.strftime('%d.%m.%Y %H:%M') }}</p>
+
+      {% if order.order_status != 'отримано' %}
+      <form method="post" action="/cancel_order/{{ order.id }}">
+        <button class="btn btn--outline btn--full" type="submit"
+          onclick="return confirm('Скасувати це замовлення?');">
+          Скасувати замовлення
+        </button>
+      </form>
+      {% else %}
+      <p class="order-summary__archived">Замовлення отримано та закрито</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Бронювання столика — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--narrow">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Для вас</p>
+    <h1 class="page-header__title">Бронювання <em>столика</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  <div class="card reservation-form">
+    <form class="form" id="reservationForm" method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="latitude"   id="latitude">
+      <input type="hidden" name="longitude"  id="longitude">
+
+      <!-- TABLE TYPE -->
+      <div class="form__group">
+        <label class="form__label">Тип столика</label>
+        <div class="select-grid">
+          <div>
+            <input class="select-grid__option" type="radio" name="table_type" id="t1" value="1-2" checked>
+            <label class="select-grid__label" for="t1">
+              <span class="select-grid__label-icon">🪑</span>1–2 особи
+            </label>
+          </div>
+          <div>
+            <input class="select-grid__option" type="radio" name="table_type" id="t2" value="3-4">
+            <label class="select-grid__label" for="t2">
+              <span class="select-grid__label-icon">👥</span>3–4 особи
+            </label>
+          </div>
+          <div>
+            <input class="select-grid__option" type="radio" name="table_type" id="t3" value="4+">
+            <label class="select-grid__label" for="t3">
+              <span class="select-grid__label-icon">🎉</span>Більше 4-х
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATE TIME -->
+      <div class="form__group">
+        <label class="form__label" for="time">Дата та час</label>
+        <input class="form__input" type="datetime-local" id="time" name="time" required>
+        <span class="form__hint" id="timeHint">Ресторан працює з 09:00 до 22:00</span>
+        <span class="form__error" id="err-time"></span>
+      </div>
+
+      <button class="btn btn--gold btn--full" type="submit">Забронювати столик</button>
+    </form>
+
+    {% if message %}
+      <div class="reservation-message">{{ message }}</div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/coords.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reservation.js') }}"></script>
+{% endblock %}

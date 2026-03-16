@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block title %}{{ position.name }} — Maison{%
+endblock %} {% block content %}
+<div class="wrapper">
+  {% with messages = get_flashed_messages() %} {% if messages %}
+  <div class="flash flash--success">{{ messages[-1] }}</div>
+  {% endif %} {% endwith %}
+
+  <div class="position">
+    <!-- IMAGE -->
+    <div class="position__gallery">
+      <img
+        src="/static/menu/{{ position.file_name }}"
+        alt="{{ position.name }}"
+      />
+    </div>
+
+    <!-- INFO -->
+    <div class="position__info">
+      <p class="position__tag">Страва</p>
+      <h1 class="position__name">{{ position.name }}</h1>
+      <p class="position__meta">{{ position.weight }} г</p>
+      <p class="position__ingredients">{{ position.ingredients }}</p>
+
+      <p class="position__desc-label">Опис</p>
+      <p class="position__desc">{{ position.description }}</p>
+
+      <div class="position__price-row">
+        <span class="position__price">{{ position.price }}</span>
+        <span class="position__currency">грн</span>
+      </div>
+
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <input type="hidden" name="name" value="{{ position.name }}" />
+        <div class="position__order">
+          <input
+            class="position__qty"
+            type="number"
+            name="num"
+            min="1"
+            value="1"
+            placeholder="1"
+          />
+          <button class="btn btn--gold" type="submit">Додати до кошика</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

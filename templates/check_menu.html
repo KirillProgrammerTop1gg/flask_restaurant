@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Управління меню — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Адмін-панель</p>
+    <h1 class="page-header__title">Управління <em>меню</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="menu-filter" id="menuAdminFilter">
+    <button class="menu-filter__btn menu-filter__btn--active" data-category="all">Всі</button>
+    <button class="menu-filter__btn" data-category="салат">Салати</button>
+    <button class="menu-filter__btn" data-category="суп">Супи</button>
+    <button class="menu-filter__btn" data-category="основна страва">Основні страви</button>
+    <button class="menu-filter__btn" data-category="фаст-фуд">Фаст-фуд</button>
+    <button class="menu-filter__btn" data-category="піца">Піца</button>
+    <button class="menu-filter__btn" data-category="десерт">Десерти</button>
+    <button class="menu-filter__btn" data-category="напій">Напої</button>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <div class="res-table-wrap">
+      <table class="res-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Фото</th>
+            <th>Назва</th>
+            <th>Категорія</th>
+            <th>Опис</th>
+            <th>Ціна</th>
+            <th>Статус</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody">
+          {% for pos in all_positions %}
+          <tr data-category="{{ pos.position_type }}">
+            <td><span class="res-table__id">{{ pos.id }}</span></td>
+
+            <td>
+              <div class="menu-admin__thumb">
+                <img src="/static/menu/{{ pos.file_name }}" alt="{{ pos.name }}">
+              </div>
+            </td>
+
+            <td><span class="menu-admin__name">{{ pos.name }}</span></td>
+
+            <td><span class="res-table__badge">{{ pos.position_type }}</span></td>
+
+            <td><span class="menu-admin__desc">{{ pos.description }}</span></td>
+
+            <td><span class="menu-admin__price">{{ pos.price }} грн</span></td>
+
+            <td>
+              {% if pos.active %}
+                <span class="menu-admin__badge menu-admin__badge--active">Активний</span>
+              {% else %}
+                <span class="menu-admin__badge menu-admin__badge--inactive">Прихований</span>
+              {% endif %}
+            </td>
+
+            <td>
+              <form class="menu-admin__actions" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="pos_id"     value="{{ pos.id }}">
+                <button class="btn btn--outline btn--sm" type="submit" name="change_status">
+                  {% if pos.active %}Приховати{% else %}Показати{% endif %}
+                </button>
+                <button class="btn btn--sm menu-admin__btn-delete" type="submit" name="delete_position"
+                  onclick="return confirm('Видалити «{{ pos.name }}»?')">
+                  Видалити
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr id="emptyRow">
+            <td colspan="8" style="text-align:center; padding:48px; color:var(--clr-muted); font-style:italic;">
+              Позицій у меню немає
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- empty state при фільтрації -->
+      <div class="menu-empty" id="adminTableEmpty" style="display:none;">
+        <p class="menu-empty__text">У цій категорії немає позицій</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/menu-admin-filter.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Меню — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Наша пропозиція</p>
+    <h1 class="page-header__title">Головне <em>меню</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="menu-filter" id="menuFilter">
+    <button class="menu-filter__btn menu-filter__btn--active" data-category="all">Всі страви</button>
+    <button class="menu-filter__btn" data-category="салат">Салати</button>
+    <button class="menu-filter__btn" data-category="суп">Супи</button>
+    <button class="menu-filter__btn" data-category="основна страва">Основні страви</button>
+    <button class="menu-filter__btn" data-category="фаст-фуд">Фаст-фуд</button>
+    <button class="menu-filter__btn" data-category="піца">Піца</button>
+    <button class="menu-filter__btn" data-category="десерт">Десерти</button>
+    <button class="menu-filter__btn" data-category="напій">Напої</button>
+  </div>
+
+  <!-- GRID -->
+  <div class="menu-grid" id="menuGrid">
+    {% for position in all_positions %}
+    <article class="menu-card" data-category="{{ position.position_type }}">
+      <div class="menu-card__img-wrap">
+        <img src="/static/menu/{{ position.file_name }}" alt="{{ position.name }}" loading="lazy">
+      </div>
+      <div class="menu-card__body">
+        <div class="menu-card__type">{{ position.position_type }}</div>
+        <h3 class="menu-card__name">{{ position.name }}</h3>
+        <p class="menu-card__ingredients">{{ position.ingredients }}</p>
+        <div class="menu-card__footer">
+          <span class="menu-card__price">{{ position.price }} грн</span>
+          <a href="/position/{{ position.name }}" class="btn btn--outline btn--sm">Детальніше</a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="menu-empty" id="menuEmpty" style="display:none;">
+    <p class="menu-empty__text">У цій категорії немає страв</p>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/menu-filter.js') }}"></script>
+{% endblock %}

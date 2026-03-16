@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block title %}Вхід — Maison{% endblock %} {% block
+content %}
+<div class="auth">
+  <div class="auth__card">
+    <div class="auth__logo">MAIS<span>O</span>N</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% set category, message = messages[0] %}
+    <div class="flash flash--{{ category }}">{{ message }}</div>
+    {% endif %} {% endwith %}
+
+    <h2 class="auth__title">Вхід</h2>
+    <p class="auth__sub">Раді бачити вас знову</p>
+
+    <form class="form" action="/login" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="form__group">
+        <label class="form__label" for="nickname">Нікнейм</label>
+        <input
+          class="form__input"
+          type="text"
+          id="nickname"
+          name="nickname"
+          placeholder="Ваш нікнейм"
+          required
+        />
+      </div>
+
+      <div class="form__group">
+        <label class="form__label" for="password">Пароль</label>
+        <input
+          class="form__input"
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button class="btn btn--primary btn--full" type="submit">Увійти</button>
+
+      <p class="form__footer-link">
+        Немає акаунту? <a href="/register">Зареєструватись</a>
+      </p>
+    </form>
+  </div>
+</div>
+{% endblock %}

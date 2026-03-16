@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Реєстрація — Maison{% endblock %}
+
+{% block content %}
+<div class="auth">
+  <div class="auth__card">
+
+    <div class="auth__logo">MAIS<span>O</span>N</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% set category, message = messages[0] %}
+        <div class="flash flash--{{ category }}">{{ message }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <h2 class="auth__title">Реєстрація</h2>
+    <p class="auth__sub">Створіть акаунт, щоб робити замовлення</p>
+
+    <form class="form" id="registerForm" action="/register" method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <!-- NICKNAME -->
+      <div class="form__group">
+        <label class="form__label" for="nickname">Нікнейм</label>
+        <input class="form__input" type="text" id="nickname" name="nickname"
+               placeholder="Ваш нікнейм" autocomplete="username" required>
+        <span class="form__error" id="err-nickname"></span>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form__group">
+        <label class="form__label" for="email">Email</label>
+        <input class="form__input" type="email" id="email" name="email"
+               placeholder="your@email.com" autocomplete="email" required>
+        <span class="form__error" id="err-email"></span>
+      </div>
+
+      <!-- PHONE -->
+      <div class="form__group">
+        <label class="form__label" for="phone">Телефон</label>
+        <input class="form__input" type="tel" id="phone" name="phone"
+               placeholder="+380 XX XXX XX XX" autocomplete="tel" required>
+        <span class="form__error" id="err-phone"></span>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="form__group">
+        <label class="form__label" for="password">Пароль</label>
+        <div class="form__input-wrap">
+          <input class="form__input" type="password" id="password" name="password"
+                 placeholder="••••••••" autocomplete="new-password" required>
+          <button class="form__eye" type="button" id="togglePassword" tabindex="-1" aria-label="Показати пароль">
+            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="form__strength" id="strengthBar">
+          <div class="form__strength-fill" id="strengthFill"></div>
+        </div>
+        <span class="form__hint" id="strengthLabel"></span>
+        <span class="form__error" id="err-password"></span>
+      </div>
+
+      <!-- CONFIRM PASSWORD -->
+      <div class="form__group">
+        <label class="form__label" for="password2">Підтвердження паролю</label>
+        <input class="form__input" type="password" id="password2" name="password2"
+               placeholder="••••••••" autocomplete="new-password" required>
+        <span class="form__error" id="err-password2"></span>
+      </div>
+
+      <button class="btn btn--primary btn--full" type="submit">Зареєструватися</button>
+      <p class="form__footer-link">Вже є акаунт? <a href="/login">Увійти</a></p>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

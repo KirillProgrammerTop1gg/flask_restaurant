@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Maison{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">MAIS<span>O</span>N</a>
+      <a href="/menu"     class="nav__link {% if request.endpoint == 'menu'      %}nav__link--active{% endif %}">Меню</a>
+      <a href="/reserved" class="nav__link {% if request.endpoint == 'reserved'  %}nav__link--active{% endif %}">Бронювання</a>
+      {% if current_user.is_authenticated %}
+        <a href="/my_orders" class="nav__link {% if request.endpoint == 'my_orders' %}nav__link--active{% endif %}">Замовлення</a>
+        <a href="/basket"    class="nav__link {% if request.endpoint == 'basket'    %}nav__link--active{% endif %}">Кошик</a>
+
+        {% if is_admin %}
+        <!-- ADMIN DROPDOWN -->
+        <div class="nav__dropdown">
+          <button class="nav__dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            Адмін
+            <svg class="nav__dropdown-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav__dropdown-menu" role="menu">
+            <a class="nav__dropdown-item {% if request.endpoint == 'add_position'       %}nav__dropdown-item--active{% endif %}" href="/add_position"       role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Нова позиція
+            </a>
+            <a class="nav__dropdown-item {% if request.endpoint == 'reservations_check' %}nav__dropdown-item--active{% endif %}" href="/reservations_check" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Бронювання
+            </a>
+            <a class="nav__dropdown-item {% if request.endpoint == 'menu_admin' %}nav__dropdown-item--active{% endif %}" href="/menu_check" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+              Управління меню
+            </a>
+            <a class="nav__dropdown-item {% if request.endpoint == 'manage_orders' %}nav__dropdown-item--active{% endif %}" href="/manage_orders" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Замовлення
+            </a>
+          </div>
+        </div>
+        {% endif %}
+
+        <a href="/logout" class="nav__link">Вихід</a>
+      {% else %}
+        <a href="/login"    class="nav__link {% if request.endpoint == 'login'    %}nav__link--active{% endif %}">Вхід</a>
+        <a href="/register" class="nav__link {% if request.endpoint == 'register' %}nav__link--active{% endif %}">Реєстрація</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__logo">MAIS<span>O</span>N</div>
+      <p class="footer__copy">&copy; {{ now.year if now else 2026 }} Maison. Всі права захищено.</p>
+    </div>
+  </footer>
+
+  {% include '_chat.html' %}
+
+  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

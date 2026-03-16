@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Мої замовлення — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--narrow">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Особистий кабінет</p>
+    <h1 class="page-header__title">Мої <em>замовлення</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  {% if us_orders %}
+
+    {% set active_orders  = us_orders | rejectattr('status', 'equalto', 'отримано') | list %}
+    {% set archive_orders = us_orders | selectattr('status', 'equalto', 'отримано') | list %}
+
+    <!-- ACTIVE ORDERS -->
+    {% if active_orders %}
+    <div class="orders-list">
+      {% for order in active_orders %}
+      <a class="order-card" href="/my_order/{{ order.id }}">
+        <div>
+          <div class="order-card__id">Замовлення № {{ order.id }}</div>
+          <div class="order-card__meta">{{ order.order_time.strftime('%d.%m.%Y %H:%M') }}</div>
+        </div>
+        <div class="order-card__right">
+          <span class="order-status order-status--{{ order.status | replace(' ', '-') }}">
+            {{ order.status }}
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.5" style="color:var(--clr-muted); flex-shrink:0">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ARCHIVE -->
+    {% if archive_orders %}
+    <details class="orders-archive" {% if not active_orders %}open{% endif %}>
+      <summary class="orders-archive__toggle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+        Архів отриманих замовлень
+        <span class="orders-archive__count">{{ archive_orders | length }}</span>
+      </summary>
+      <div class="orders-list orders-list--archive">
+        {% for order in archive_orders %}
+        <a class="order-card order-card--archive" href="/my_order/{{ order.id }}">
+          <div>
+            <div class="order-card__id">Замовлення № {{ order.id }}</div>
+            <div class="order-card__meta">{{ order.order_time.strftime('%d.%m.%Y %H:%M') }}</div>
+          </div>
+          <div class="order-card__right">
+            <span class="order-status order-status--отримано">отримано</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" style="color:var(--clr-muted); flex-shrink:0">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </details>
+    {% endif %}
+
+    {% if not active_orders and not archive_orders %}
+    <div class="basket__empty">
+      <div class="basket__empty-icon">◌</div>
+      <h2 class="basket__empty-title">Замовлень немає</h2>
+      <p class="basket__empty-sub">Ви ще не робили жодного замовлення</p>
+      <br>
+      <a href="/menu" class="btn btn--outline">До меню</a>
+    </div>
+    {% endif %}
+
+  {% else %}
+  <div class="basket__empty">
+    <div class="basket__empty-icon">◌</div>
+    <h2 class="basket__empty-title">Замовлень немає</h2>
+    <p class="basket__empty-sub">Ви ще не робили жодного замовлення</p>
+    <br>
+    <a href="/menu" class="btn btn--outline">До меню</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

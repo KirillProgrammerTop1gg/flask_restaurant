@@ -1,0 +1,80 @@
+{% extends "base.html" %} {% block title %}Кошик — Maison{% endblock %} {% block
+content %}
+<div class="wrapper wrapper--narrow">
+  <div class="page-header">
+    <p class="page-header__eyebrow">Ваш вибір</p>
+    <h1 class="page-header__title">Ко<em>шик</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  {% if basket %}
+
+  <div class="basket">
+    {% for item in basket %}
+    <div class="basket-item">
+      <div class="basket-item__img-wrap">
+        <img src="/static/menu/{{ item.photo }}" alt="{{ item.name }}" />
+      </div>
+
+      <div class="basket-item__info">
+        <div class="basket-item__name">{{ item.name }}</div>
+        <div class="basket-item__meta">
+          {{ item.weight }} г &nbsp;·&nbsp; {{ item.qty }} шт
+        </div>
+      </div>
+
+      <div class="basket-item__price">{{ item.price * item.qty }} грн</div>
+
+      <form class="basket-item__remove" method="post" action="/basket">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <input type="hidden" name="name" value="{{ item.name }}" />
+        <button class="basket-item__remove-btn" type="submit" title="Видалити">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- TOTAL + ORDER -->
+  <div class="basket-footer">
+    <div class="basket-footer__total">
+      <span class="basket-footer__total-label">Загальна сума</span>
+      <span class="basket-footer__total-price"
+        >{{ total_price }} <small>грн</small></span
+      >
+    </div>
+    <form method="post" action="/create_order">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <button class="btn btn--gold btn--full" type="submit">
+        Оформити замовлення
+      </button>
+    </form>
+  </div>
+
+  {% else %}
+
+  <div class="basket__empty">
+    <div class="basket__empty-icon">∅</div>
+    <h2 class="basket__empty-title">Кошик порожній</h2>
+    <p class="basket__empty-sub">
+      Додайте страви з меню, щоб зробити замовлення
+    </p>
+    <br />
+    <a href="/menu" class="btn btn--outline">Перейти до меню</a>
+  </div>
+
+  {% endif %}
+</div>
+{% endblock %}

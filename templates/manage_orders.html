@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Управління замовленнями — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Адмін-панель</p>
+    <h1 class="page-header__title">Управління <em>замовленнями</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="menu-filter" id="ordersFilter">
+    <button class="menu-filter__btn menu-filter__btn--active" data-status="all">Всі</button>
+    <button class="menu-filter__btn" data-status="створено">Створено</button>
+    <button class="menu-filter__btn" data-status="готується">Готується</button>
+    <button class="menu-filter__btn" data-status="готово до видачі">Готово до видачі</button>
+    <button class="menu-filter__btn" data-status="отримано">Отримано</button>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <div class="res-table-wrap">
+      <table class="res-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Час</th>
+            <th>Користувач</th>
+            <th>Email</th>
+            <th>Телефон</th>
+            <th>Сума</th>
+            <th>Статус</th>
+            <th>Дії</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          {% for order in all_orders %}
+          <tr data-status="{{ order.order_status }}">
+
+            <td><span class="res-table__id">{{ order.id }}</span></td>
+
+            <td style="white-space:nowrap; font-size:13px;">
+              {{ order.order_time.strftime('%d.%m.%Y') }}<br>
+              <span style="color:var(--clr-muted)">{{ order.order_time.strftime('%H:%M') }}</span>
+            </td>
+
+            <td>
+              <span class="menu-admin__name">{{ order.user.nickname }}</span>
+            </td>
+
+            <td>
+              {% if order.user.email %}
+                <a class="res-contacts__item" href="mailto:{{ order.user.email }}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  {{ order.user.email }}
+                </a>
+              {% else %}
+                <span class="res-table__empty">—</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if order.user.phone %}
+                <a class="res-contacts__item" href="tel:{{ order.user.phone }}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  {{ order.user.phone }}
+                </a>
+              {% else %}
+                <span class="res-table__empty">—</span>
+              {% endif %}
+            </td>
+
+            <td>
+              <span class="menu-admin__price">{{ order.total_price }} грн</span>
+            </td>
+
+            <td>
+              <span class="order-status order-status--{{ order.order_status | replace(' ', '-') }}">
+                {% if order.order_status == 'створено' %}🕐
+                {% elif order.order_status == 'готується' %}🍳
+                {% elif order.order_status == 'готово до видачі' %}✅
+                {% elif order.order_status == 'отримано' %}📦
+                {% endif %}
+                {{ order.order_status }}
+              </span>
+            </td>
+
+            <td>
+              <div class="manage-order__actions">
+
+                <!-- CHANGE STATUS -->
+                <form method="post" action="/manage_orders" class="manage-order__form">
+                  <input type="hidden" name="csrf_token"  value="{{ csrf_token }}">
+                  <input type="hidden" name="order_id"    value="{{ order.id }}">
+                  <input type="hidden" name="action"      value="change_status">
+                  <select class="manage-order__select" name="new_status"
+                          onchange="this.form.submit()">
+                    <option value="" disabled selected>Змінити статус</option>
+                    {% for s in ['створено', 'готується', 'готово до видачі', 'отримано'] %}
+                      <option value="{{ s }}" {% if order.order_status == s %}disabled{% endif %}>
+                        {{ s }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </form>
+
+                <!-- CANCEL -->
+                <form method="post" action="/manage_orders">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                  <input type="hidden" name="order_id"   value="{{ order.id }}">
+                  <input type="hidden" name="action"      value="cancel">
+                  <button class="btn btn--sm manage-order__btn-cancel" type="submit"
+                    onclick="return confirm('Скасувати замовлення #{{ order.id }}?')">
+                    Скасувати
+                  </button>
+                </form>
+
+              </div>
+            </td>
+
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" style="text-align:center; padding:48px; color:var(--clr-muted); font-style:italic;">
+              Замовлень немає
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="menu-empty" id="ordersEmpty" style="display:none;">
+        <p class="menu-empty__text">Замовлень з таким статусом немає</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/orders-filter.js') }}"></script>
+{% endblock %}

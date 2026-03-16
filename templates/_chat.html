@@ -1,0 +1,43 @@
+<!-- ===== AI CHAT WIDGET ===== -->
+<div class="chat-bubble" id="chatBubble" title="Шеф-асистент">
+  <span class="chat-bubble__icon">👨‍🍳</span>
+  <span class="chat-bubble__ping"></span>
+</div>
+
+<div class="chat-window" id="chatWindow">
+  <div class="chat-window__header">
+    <div class="chat-window__header-info">
+      <div class="chat-window__avatar">👨‍🍳</div>
+      <div>
+        <div class="chat-window__name">Шеф-асистент</div>
+        <div class="chat-window__status">онлайн</div>
+      </div>
+    </div>
+    <button class="chat-window__close" id="chatClose" aria-label="Закрити">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="chat-window__messages" id="chatMessages">
+    <div class="chat-msg chat-msg--bot">
+      <div class="chat-msg__bubble">
+        Привіт! Я шеф-асистент Maison 🍽️<br>
+        Запитайте мене про наші страви, інгредієнти або рекомендації.
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-window__footer">
+    <input class="chat-window__input" id="chatInput" type="text" placeholder="Напишіть щось..." autocomplete="off">
+    <button class="chat-window__send" id="chatSend" aria-label="Надіслати">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" nonce="{{ nonce }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}" nonce="{{ nonce }}"></script>

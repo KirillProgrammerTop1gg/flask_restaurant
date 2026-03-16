@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block title %}Оформлення замовлення — Maison{%
+endblock %} {% block content %}
+<div class="wrapper wrapper--narrow">
+  <div class="page-header">
+    <p class="page-header__eyebrow">Ваш вибір</p>
+    <h1 class="page-header__title">Замо<em>влення</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  {% if basket %}
+
+  <div class="basket">
+    {% for position in basket %}
+    <div class="basket__item">
+      <span class="basket__item-name">{{ position }}</span>
+      <span class="basket__item-qty">× {{ basket[position] }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <button class="btn btn--gold btn--full" type="submit">
+      Підтвердити замовлення
+    </button>
+  </form>
+
+  {% else %}
+
+  <div class="basket__empty">
+    <div class="basket__empty-icon">∅</div>
+    <h2 class="basket__empty-title">Кошик порожній</h2>
+    <p class="basket__empty-sub">
+      Додайте страви з меню, щоб зробити замовлення
+    </p>
+    <br />
+    <a href="/menu" class="btn btn--outline">Перейти до меню</a>
+  </div>
+
+  {% endif %}
+</div>
+{% endblock %}

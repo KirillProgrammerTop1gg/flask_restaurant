@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Бронювання (адмін) — Maison{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">Адмін-панель</p>
+    <h1 class="page-header__title">Всі <em>бронювання</em></h1>
+    <div class="page-header__divider"></div>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <div class="res-table-wrap">
+      <table class="res-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Час</th>
+            <th>Столик</th>
+            <th>Користувач</th>
+            <th>Email</th>
+            <th>Телефон</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for res in all_reservations %}
+          <tr>
+            <td><span class="res-table__id">{{ res.id }}</span></td>
+
+            <td>{{ res.time_start }}</td>
+
+            <td><span class="res-table__badge">{{ res.type_table }}</span></td>
+
+            <td>{{ res.user.nickname }}</td>
+
+            <td>
+              {% if res.user.email %}
+                <a class="res-contacts__item" href="mailto:{{ res.user.email }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  {{ res.user.email }}
+                </a>
+              {% else %}
+                <span class="res-table__empty">—</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if res.user.phone %}
+                <a class="res-contacts__item" href="tel:{{ res.user.phone }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  {{ res.user.phone }}
+                </a>
+              {% else %}
+                <span class="res-table__empty">—</span>
+              {% endif %}
+            </td>
+
+            <td>
+              <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="reserv_id"  value="{{ res.id }}">
+                <button class="btn btn--outline btn--sm" type="submit"
+                  onclick="return confirm('Видалити бронювання #{{ res.id }}?')">
+                  Видалити
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" style="text-align:center; padding:48px; color:var(--clr-muted); font-style:italic;">
+              Бронювань немає
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
