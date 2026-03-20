@@ -1,4 +1,5 @@
 .env
+static/menu/
 __pycache__
 flask_session
 menu.json
