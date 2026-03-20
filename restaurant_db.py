@@ -17,9 +17,10 @@ load_dotenv()
 
 PGUSER = os.getenv("PGUSER")
 PGPASSWORD = os.getenv("PGPASSWORD")
+DBPATH = os.getenv("DBPATH")
 
 engine = create_engine(
-    f"postgresql+psycopg2://{PGUSER}:{PGPASSWORD}@dpg-d6ueudnkijhs73fm3uf0-a/online_restaurant_6i1p",
+    f"postgresql+psycopg2://{PGUSER}:{PGPASSWORD}@{DBPATH}/online_restaurant_6i1p",
     echo=True,
 )
 Session = sessionmaker(bind=engine)
