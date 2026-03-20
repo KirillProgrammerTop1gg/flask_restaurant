@@ -99,17 +99,27 @@ def apply_csp(response):
     response.headers["Content-Security-Policy"] = csp
     return response
 
+@app.context_processor
+def inject_globals():
+    return dict(
+        is_admin=current_user.is_authenticated and current_user.nickname == "Admin",
+        csrf_token=session.get("csrf_token", "")
+    )
+
+@app.context_processor
+def inject_basket_count():
+    from flask import session as flask_session
+    basket = flask_session.get("basket", {})
+    count = sum(int(v) for v in basket.values()) if basket else 0
+    return dict(basket_count=count)
 
 @app.route("/")
 @app.route("/home")
 def home():
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(16)
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
 
-    return render_template("home.html", is_admin=is_admin)
+    return render_template("home.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -130,13 +140,8 @@ def register():
                 .first()
             ):
                 flash("Користувач з таким email або нікнеймом вже існує!", "danger")
-                is_admin = False
-                if current_user.is_authenticated:
-                    is_admin = current_user.nickname == "Admin"
                 return render_template(
                     "register.html",
-                    csrf_token=session["csrf_token"],
-                    is_admin=is_admin,
                 )
 
             new_user = Users(nickname=nickname, email=email, phone=phone)
@@ -147,13 +152,10 @@ def register():
             login_user(new_user)
             return redirect(url_for("home"))
 
-    is_admin = False
     if current_user.is_authenticated:
         return redirect(url_for("home"))
     return render_template(
         "register.html",
-        csrf_token=session["csrf_token"],
-        is_admin=is_admin,
     )
 
 
@@ -174,13 +176,10 @@ def login():
 
             flash("Неправильний nickname або пароль!", "danger")
 
-    is_admin = False
     if current_user.is_authenticated:
         return redirect(url_for("home"))
     return render_template(
         "login.html",
-        csrf_token=session["csrf_token"],
-        is_admin=is_admin,
     )
 
 
@@ -230,14 +229,9 @@ def add_position():
             cursor.commit()
 
         flash("Позицію додано успішно!")
-
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
+        
     return render_template(
         "add_position.html",
-        csrf_token=session["csrf_token"],
-        is_admin=is_admin,
     )
 
 
@@ -245,13 +239,9 @@ def add_position():
 def menu():
     with Session() as session:
         all_positions = session.query(Menu).filter_by(active=True).all()
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     return render_template(
         "menu.html",
         all_positions=all_positions,
-        is_admin=is_admin,
     )
 
 
@@ -263,7 +253,7 @@ def position(name):
             return "Запит заблоковано!", 403
 
         position_name = request.form.get("name")
-        position_num = request.form.get("num")
+        position_num = int(request.form.get("num"))
         if "basket" not in session:
             basket = {}
             basket[position_name] = position_num
@@ -275,14 +265,9 @@ def position(name):
         flash("Позицію додано у кошик!")
     with Session() as cursor:
         us_position = cursor.query(Menu).filter_by(active=True, name=name).first()
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     return render_template(
         "position.html",
-        csrf_token=session["csrf_token"],
         position=us_position,
-        is_admin=is_admin,
     )
 
 
@@ -308,23 +293,18 @@ def basket():
             basket_to_show.append(
                 {
                     "name": product[0],
-                    "qty": float(product[1]),
+                    "qty": product[1],
                     "price": full_product.price,
                     "weight": full_product.weight,
                     "photo": full_product.file_name,
                 }
             )
-            total_price += float(product[1]) * full_product.price
+            total_price += product[1] * full_product.price
 
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     return render_template(
         "basket.html",
         basket=basket_to_show,
         total_price=total_price,
-        csrf_token=session["csrf_token"],
-        is_admin=is_admin,
     )
 
 
@@ -355,14 +335,9 @@ def create_order():
                     cursor.refresh(new_order)
                     return redirect(f"/my_order/{new_order.id}")
 
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     return render_template(
         "create_order.html",
-        csrf_token=session["csrf_token"],
         basket=basket,
-        is_admin=is_admin,
     )
 
 
@@ -371,10 +346,7 @@ def create_order():
 def my_orders():
     with Session() as cursor:
         us_orders = cursor.query(Orders).filter_by(user_id=current_user.id).all()
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
-    return render_template("my_orders.html", us_orders=us_orders, is_admin=is_admin)
+    return render_template("my_orders.html", us_orders=us_orders)
 
 
 @app.route("/my_order/<int:id>")
@@ -394,20 +366,16 @@ def my_order(id):
             positions.append(
                 {
                     "name": order[0],
-                    "qty": float(order[1]),
-                    "price": float(full_product.price),
+                    "qty": order[1],
+                    "price": full_product.price,
                     "weight": full_product.weight,
                     "photo": full_product.file_name,
                 }
             )
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     return render_template(
         "my_order.html",
         order=us_order,
         total_price=total_price,
-        is_admin=is_admin,
         positions=positions,
     )
 
@@ -442,14 +410,9 @@ def manage_orders():
                 for i, cnt in order.order_list.items()
             )
             order.total_price = total_price
-        is_admin = False
-        if current_user.is_authenticated:
-            is_admin = current_user.nickname == "Admin"
         return render_template(
             "manage_orders.html",
             all_orders=all_orders,
-            csrf_token=session["csrf_token"],
-            is_admin=is_admin,
         )
 
 
@@ -466,9 +429,6 @@ def cancel_order(id):
 @app.route("/reserved", methods=["GET", "POST"])
 @login_required
 def reserved():
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     if request.method == "POST":
         if request.form.get("csrf_token") != session["csrf_token"]:
             return "Запит заблоковано!", 403
@@ -510,13 +470,9 @@ def reserved():
             return render_template(
                 "reserved.html",
                 message=message,
-                csrf_token=session["csrf_token"],
-                is_admin=is_admin,
             )
     return render_template(
         "reserved.html",
-        csrf_token=session["csrf_token"],
-        is_admin=is_admin,
     )
 
 
@@ -538,14 +494,9 @@ def reservations_check():
 
     with Session() as cursor:
         all_reservations = cursor.query(Reservation).all()
-        is_admin = False
-        if current_user.is_authenticated:
-            is_admin = current_user.nickname == "Admin"
         return render_template(
             "reservations_check.html",
             all_reservations=all_reservations,
-            csrf_token=session["csrf_token"],
-            is_admin=is_admin,
         )
 
 
@@ -570,14 +521,9 @@ def menu_check():
 
     with Session() as cursor:
         all_positions = cursor.query(Menu).all()
-    is_admin = False
-    if current_user.is_authenticated:
-        is_admin = current_user.nickname == "Admin"
     return render_template(
         "check_menu.html",
         all_positions=all_positions,
-        csrf_token=session["csrf_token"],
-        is_admin=is_admin,
     )
 
 

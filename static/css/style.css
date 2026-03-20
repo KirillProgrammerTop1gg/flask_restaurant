@@ -2149,3 +2149,30 @@ details[open] .orders-archive__toggle svg { transform: rotate(180deg); }
   .nav__burger  { display: flex; }
   .nav__inner   { justify-content: space-between; padding: 0 16px; }
 }
+
+/* ===== NAV BASKET BADGE ===== */
+.nav__link--basket {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--clr-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  font-family: var(--font-body);
+}
+.nav__badge--mob {
+  margin-left: auto;
+}

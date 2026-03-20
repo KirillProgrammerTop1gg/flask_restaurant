@@ -84,7 +84,7 @@ class Orders(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     order_list: Mapped[dict] = mapped_column(JSONB)
     order_time: Mapped[datetime] = mapped_column(DateTime)
-    order_status: Mapped[str] = mapped_column(String(10))
+    order_status: Mapped[str] = mapped_column(String(20))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     user = relationship("Users", foreign_keys="Orders.user_id", back_populates="orders")

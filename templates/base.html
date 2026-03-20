@@ -23,7 +23,12 @@
         <a href="/reserved" class="nav__link {% if request.endpoint == 'reserved'  %}nav__link--active{% endif %}">Бронювання</a>
         {% if current_user.is_authenticated %}
           <a href="/my_orders" class="nav__link {% if request.endpoint == 'my_orders' %}nav__link--active{% endif %}">Замовлення</a>
-          <a href="/basket"    class="nav__link {% if request.endpoint == 'basket'    %}nav__link--active{% endif %}">Кошик</a>
+          <a href="/basket" class="nav__link nav__link--basket {% if request.endpoint == 'basket' %}nav__link--active{% endif %}">
+            Кошик
+            {% if basket_count > 0 %}
+            <span class="nav__badge">{{ basket_count }}</span>
+            {% endif %}
+          </a>
           {% if is_admin %}
           <div class="nav__dropdown">
             <button class="nav__dropdown-toggle" aria-expanded="false" aria-haspopup="true">
@@ -70,13 +75,18 @@
     <a href="/reserved" class="mob-menu__link {% if request.endpoint == 'reserved'  %}mob-menu__link--active{% endif %}">Бронювання</a>
     {% if current_user.is_authenticated %}
       <a href="/my_orders" class="mob-menu__link {% if request.endpoint == 'my_orders' %}mob-menu__link--active{% endif %}">Замовлення</a>
-      <a href="/basket"    class="mob-menu__link {% if request.endpoint == 'basket'    %}mob-menu__link--active{% endif %}">Кошик</a>
+      <a href="/basket" class="mob-menu__link {% if request.endpoint == 'basket' %}mob-menu__link--active{% endif %}">
+        Кошик
+        {% if basket_count > 0 %}
+        <span class="nav__badge nav__badge--mob">{{ basket_count }}</span>
+        {% endif %}
+      </a>
       {% if is_admin %}
       <div class="mob-menu__section">
         <div class="mob-menu__section-title">Адмін</div>
         <a href="/add_position"       class="mob-menu__link mob-menu__link--sub {% if request.endpoint == 'add_position'       %}mob-menu__link--active{% endif %}">Нова позиція</a>
         <a href="/reservations_check" class="mob-menu__link mob-menu__link--sub {% if request.endpoint == 'reservations_check' %}mob-menu__link--active{% endif %}">Бронювання</a>
-        <a href="/menu_admin"         class="mob-menu__link mob-menu__link--sub {% if request.endpoint == 'menu_admin'         %}mob-menu__link--active{% endif %}">Управління меню</a>
+        <a href="/menu_check"         class="mob-menu__link mob-menu__link--sub {% if request.endpoint == 'menu_admin'         %}mob-menu__link--active{% endif %}">Управління меню</a>
         <a href="/manage_orders"      class="mob-menu__link mob-menu__link--sub {% if request.endpoint == 'manage_orders'      %}mob-menu__link--active{% endif %}">Замовлення</a>
       </div>
       {% endif %}
