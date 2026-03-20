@@ -423,13 +423,13 @@ def manage_orders():
             return "Запит заблоковано!", 403
 
         action = request.form["action"]
-        order_id = request.form['order_id']
+        order_id = request.form["order_id"]
         with Session() as cursor:
-            if action == 'change_status':
-                new_status = request.form['new_status']
+            if action == "change_status":
+                new_status = request.form["new_status"]
                 us_order = cursor.query(Orders).filter_by(id=order_id).first()
                 us_order.order_status = new_status
-            elif action == 'cancel':
+            elif action == "cancel":
                 us_order = cursor.query(Orders).filter_by(id=order_id).first()
                 cursor.delete(us_order)
             cursor.commit()
@@ -446,7 +446,10 @@ def manage_orders():
         if current_user.is_authenticated:
             is_admin = current_user.nickname == "Admin"
         return render_template(
-            "manage_orders.html", all_orders=all_orders, csrf_token=session["csrf_token"], is_admin = is_admin
+            "manage_orders.html",
+            all_orders=all_orders,
+            csrf_token=session["csrf_token"],
+            is_admin=is_admin,
         )
 
 
@@ -571,7 +574,10 @@ def menu_check():
     if current_user.is_authenticated:
         is_admin = current_user.nickname == "Admin"
     return render_template(
-        "check_menu.html", all_positions=all_positions, csrf_token=session["csrf_token"], is_admin = is_admin
+        "check_menu.html",
+        all_positions=all_positions,
+        csrf_token=session["csrf_token"],
+        is_admin=is_admin,
     )
 
 
