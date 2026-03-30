@@ -99,19 +99,23 @@ def apply_csp(response):
     response.headers["Content-Security-Policy"] = csp
     return response
 
+
 @app.context_processor
 def inject_globals():
     return dict(
         is_admin=current_user.is_authenticated and current_user.nickname == "Admin",
-        csrf_token=session.get("csrf_token", "")
+        csrf_token=session.get("csrf_token", ""),
     )
+
 
 @app.context_processor
 def inject_basket_count():
     from flask import session as flask_session
+
     basket = flask_session.get("basket", {})
     count = sum(int(v) for v in basket.values()) if basket else 0
     return dict(basket_count=count)
+
 
 @app.route("/")
 @app.route("/home")
@@ -229,7 +233,7 @@ def add_position():
             cursor.commit()
 
         flash("Позицію додано успішно!")
-        
+
     return render_template(
         "add_position.html",
     )
@@ -270,6 +274,7 @@ def position(name):
 
     return render_template("position.html", position=us_position)
 
+
 @app.route("/basket", methods=["GET", "POST"])
 def basket():
     if request.method == "POST":
@@ -307,7 +312,7 @@ def basket():
     )
 
 
-@app.route('/update_cart/<name>/<action>')
+@app.route("/update_cart/<name>/<action>")
 def update_cart(name, action):
     basket = session.get("basket", {})
     if name in basket:
