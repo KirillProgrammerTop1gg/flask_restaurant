@@ -247,29 +247,28 @@ def menu():
 
 @app.route("/position/<name>", methods=["GET", "POST"])
 def position(name):
-    if request.method == "POST":
+    with Session() as cursor:
+        us_position = cursor.query(Menu).filter_by(active=True, name=name).first()
 
+    if request.method == "POST":
         if request.form.get("csrf_token") != session["csrf_token"]:
             return "Запит заблоковано!", 403
 
         position_name = request.form.get("name")
         position_num = int(request.form.get("num"))
-        if "basket" not in session:
-            basket = {}
-            basket[position_name] = position_num
-            session["basket"] = basket
-        else:
-            basket = session.get("basket")
-            basket[position_name] = position_num
-            session["basket"] = basket
-        flash("Позицію додано у кошик!")
-    with Session() as cursor:
-        us_position = cursor.query(Menu).filter_by(active=True, name=name).first()
-    return render_template(
-        "position.html",
-        position=us_position,
-    )
 
+        if not (1 <= position_num <= 10):
+            flash("Кількість має бути від 1 до 10!", "danger")
+            return render_template("position.html", position=us_position)
+
+        if "basket" not in session:
+            session["basket"] = {}
+        basket = session.get("basket")
+        basket[position_name] = position_num
+        session["basket"] = basket
+        flash("Позицію додано у кошик!")
+
+    return render_template("position.html", position=us_position)
 
 @app.route("/basket", methods=["GET", "POST"])
 def basket():
@@ -306,6 +305,22 @@ def basket():
         basket=basket_to_show,
         total_price=total_price,
     )
+
+
+@app.route('/update_cart/<name>/<action>')
+def update_cart(name, action):
+    basket = session.get("basket", {})
+    if name in basket:
+        if action == "inc":
+            basket[name] = int(basket[name]) + 1
+            if basket[name] > 10:
+                basket[name] = 10
+        elif action == "dec":
+            basket[name] = int(basket[name]) - 1
+            if basket[name] < 1:
+                basket.pop(name)
+    session["basket"] = basket
+    return redirect(url_for("basket"))
 
 
 @app.route("/create_order", methods=["GET", "POST"])

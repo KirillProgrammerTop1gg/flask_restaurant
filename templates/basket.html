@@ -18,9 +18,13 @@ content %}
 
       <div class="basket-item__info">
         <div class="basket-item__name">{{ item.name }}</div>
-        <div class="basket-item__meta">
-          {{ item.weight }} г &nbsp;·&nbsp; {{ item.qty }} шт
-        </div>
+        <div class="basket-item__meta">{{ item.weight }} г</div>
+      </div>
+
+      <div class="basket-item__qty-controls">
+        <a href="/update_cart/{{ item.name | urlencode }}/dec" class="basket-item__qty-btn">−</a>
+        <span class="basket-item__qty-val">{{ item.qty }}</span>
+        <a href="/update_cart/{{ item.name | urlencode }}/inc" class="basket-item__qty-btn">+</a>
       </div>
 
       <div class="basket-item__price">{{ item.price * item.qty }} грн</div>
